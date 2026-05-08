@@ -245,17 +245,8 @@ def safe_example_path(name: str) -> Path:
 
 
 def load_demo_image(payload: Dict[str, Any]) -> np.ndarray:
-    if payload.get("image_data"):
-        data_url = str(payload["image_data"])
-        if "," in data_url:
-            _, encoded = data_url.split(",", 1)
-        else:
-            encoded = data_url
-        image_bytes = base64.b64decode(encoded)
-        image = Image.open(BytesIO(image_bytes))
-    else:
-        image_name = str(payload.get("image_name") or list_example_images()[0])
-        image = Image.open(safe_example_path(image_name))
+    image_name = str(payload.get("image_name") or list_example_images()[0])
+    image = Image.open(safe_example_path(image_name))
 
     image = image.convert("RGB")
     width, height = image.size
@@ -474,7 +465,7 @@ HTML = r"""<!doctype html>
       font-weight: 700;
     }
 
-    select, input[type="file"] {
+    select {
       min-height: 34px;
       width: 100%;
       border: 1px solid #adb6c2;
@@ -688,13 +679,8 @@ HTML = r"""<!doctype html>
         </div>
         <div class="control-body">
           <div class="field">
-            <label for="imageSelect">Input Image</label>
+            <label for="imageSelect">Image Read</label>
             <select id="imageSelect"></select>
-          </div>
-
-          <div class="field">
-            <label for="uploadInput">Image Read</label>
-            <input id="uploadInput" type="file" accept="image/*">
           </div>
 
           <div class="field">
@@ -746,7 +732,6 @@ HTML = r"""<!doctype html>
     const state = {
       images: [],
       imageName: "",
-      imageData: null,
       quality: 60,
       blockX: 0,
       blockY: 0,
@@ -792,24 +777,9 @@ HTML = r"""<!doctype html>
     function wireControls() {
       $("imageSelect").addEventListener("change", (event) => {
         state.imageName = event.target.value;
-        state.imageData = null;
-        $("uploadInput").value = "";
         state.blockX = 0;
         state.blockY = 0;
         processImage();
-      });
-
-      $("uploadInput").addEventListener("change", (event) => {
-        const file = event.target.files && event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          state.imageData = reader.result;
-          state.blockX = 0;
-          state.blockY = 0;
-          processImage();
-        };
-        reader.readAsDataURL(file);
       });
 
       $("qualitySlider").addEventListener("input", (event) => {
@@ -909,7 +879,6 @@ HTML = r"""<!doctype html>
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             image_name: state.imageName,
-            image_data: state.imageData,
             quality: state.quality,
             mask: state.mask,
             block_x: state.blockX,

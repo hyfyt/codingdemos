@@ -3,7 +3,7 @@
 This is a Python web demo for visualizing JPEG-style DCT transform coding.
 It keeps the core flow compact:
 
-- load an example or uploaded image;
+- load a cloud-side example image from `examples/`;
 - convert RGB to YCbCr;
 - run 8x8 DCT, JPEG-style quantisation, coefficient masking, dequantisation and IDCT;
 - click DCT basis tiles to enable or remove coefficients;
