@@ -1,0 +1,10 @@
+autoOpen: false
+autoPreview: true
+apps:
+  - port: 8501
+    run: python3 python_dct_demo/app.py --host 0.0.0.0 --port 8501
+    root: .
+    name: Python DCT Demo
+    description: Interactive JPEG DCT transform-coding visualization demo.
+    autoOpen: false
+    autoPreview: true
